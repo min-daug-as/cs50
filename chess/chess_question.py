@@ -1,5 +1,11 @@
+from enum import Enum
+
 FILES = "abcdefgh"
 
+class Pieces(Enum):
+    QUEEN = "queen"
+    KNIGHT = "knight"
+    
 
 def main():
 
@@ -32,10 +38,10 @@ def get_pieces_white_can_take(piece, pos, black_pieces):
 
 def get_piece_paths(piece, pos):
     """Get all possible paths for a given piece from its position."""
-    match piece:
-        case "queen":
+    match Pieces(piece):
+        case Pieces.QUEEN:
             return get_queen_paths(pos)
-        case "knight":
+        case Pieces.KNIGHT:
             return get_knight_paths(pos)
         case _:
             return []
@@ -141,23 +147,23 @@ def input_white_piece():
     while True:
         try:
             piece_str = input(
-                "Input white piece name (queen or knight) and its position i.e. knigth a5: "
+                f"Input white piece name ({', '.join([piece.value for piece in Pieces])}) and its position i.e. knigth a5: "
             )
             piece, pos = piece_str.strip().lower().split(" ")
 
-            if piece not in ["queen", "knight"]:
-                print("Only queen or knight can be proveded")
+            if piece not in [piece.value for piece in Pieces]:
+                print(f"Only {', '.join([piece.value for piece in Pieces])} can be proveded")
                 continue
 
             if not are_coordinates_valid(pos):
                 print(
-                    "Position should be a coordinates of the peace in xy format, where is x represents a columns labeled a trough g, and y represents rows numbered 1 to 8 i.e. a5"
+                    "Position should be a coordinates of the peace in xy format, where is x represents a columns labeled a through g, and y represents rows numbered 1 to 8 i.e. a5"
                 )
                 continue
 
             return piece, pos
         except ValueError:
-            print("Invlaid input")
+            print("Invalid input")
         except EOFError:
             exit("Program aborted")
 
@@ -183,8 +189,7 @@ def input_black_pieces(white_piece_pos):
 
             if not are_coordinates_valid(pos):
                 print("Invalid position format")
-            
-            if pos in pieces:
+            elif pos in pieces:
                 print("This square is already occupied by black piece")
             elif pos == white_piece_pos:
                 print("This square is already occupied by white piece")
